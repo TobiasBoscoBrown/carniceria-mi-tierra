@@ -85,7 +85,7 @@ SERVICES=[
 
 GALLERY=["carne-asada","tacos","interior-dining","meat-counter","market-shelves","enchiladas",
  "taqueria-tray","tacos-egg","nachos","coctel","drinks","building-exterior","market-interior",
- "tacos-plate","quesadilla","torta","plato-caldo","storefront-entrance"]
+ "loaded-plate","quesadilla","torta","plato-caldo","storefront-entrance"]
 
 # ---------- ICONS (inline svg, currentColor) ----------
 def icon(n,cls="w-6 h-6"):
@@ -108,6 +108,9 @@ def icon(n,cls="w-6 h-6"):
   "x":'<path d="M6 6l12 12M18 6L6 18"/>',
   }
   return f'<svg class="{cls}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">{P[n]}</svg>'
+
+def fstar(cls="w-4 h-4"):
+  return f'<svg class="{cls}" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2l2.9 6.2 6.6.9-4.8 4.7 1.2 6.7L12 17.8 5.9 20.5 7 13.8 2.2 9.1l6.6-.9L12 2z"/></svg>' 
 print("part1 loaded")
 
 NAV=[("Carnicería","/services.html"),("Taquería","/taqueria.html"),("Gallery","/index.html#gallery"),
@@ -151,7 +154,7 @@ def header():
   return f'''
 <div class="bg-ink text-cream text-[12.5px]">
  <div class="max-w-6xl mx-auto px-4 py-1.5 flex flex-wrap items-center justify-center gap-x-4 gap-y-0.5 text-center">
-  <span class="inline-flex items-center gap-1.5">{icon('star','w-3.5 h-3.5 text-gold')}<b class="font-semibold">{RATING}</b> from {RCOUNT} Google reviews</span>
+  <span class="inline-flex items-center gap-1.5">{fstar('w-3.5 h-3.5 text-gold')}<b class="font-semibold">{RATING}</b> from {RCOUNT} Google reviews</span>
   <span class="opacity-40">|</span>
   <span class="inline-flex items-center gap-1.5">{icon('clock','w-3.5 h-3.5 text-gold')}Open daily, 8:00 AM to 8:00 PM</span>
   <span class="opacity-40">|</span>
@@ -169,6 +172,7 @@ def header():
   </a>
   <nav class="hidden lg:flex items-center gap-7 text-[15px] font-semibold text-ink/85">{links}</nav>
   <div class="flex items-center gap-2">
+   <button onclick="toggleLang()" id="langBtn" class="inline-flex items-center gap-1.5 border border-line rounded-xl px-3 py-2.5 text-sm font-semibold text-ink hover:border-ink transition-colors" aria-label="Cambiar idioma / Switch language"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c2.6 3 2.6 15 0 18M12 3c-2.6 3-2.6 15 0 18"/></svg><span id="langLabel">ES</span></button>
    <a href="tel:{PHONE_TEL}" class="hidden sm:inline-flex items-center gap-2 bg-chili hover:bg-chilid text-cream font-semibold text-sm px-4 py-2.5 rounded-xl transition-colors">{icon('phone','w-4 h-4')}<span class="hidden md:inline">{PHONE_DISP}</span><span class="md:hidden">Call</span></a>
    <button onclick="openMenu()" class="lg:hidden grid place-items-center w-11 h-11 rounded-xl border border-line text-ink" aria-label="Open menu">{icon('menu','w-6 h-6')}</button>
   </div>
@@ -182,7 +186,8 @@ def header():
    <button onclick="closeMenu()" class="grid place-items-center w-10 h-10 rounded-lg border border-line" aria-label="Close menu">{icon('x','w-5 h-5')}</button>
   </div>
   {mlinks}
-  <a href="tel:{PHONE_TEL}" class="mt-5 flex items-center justify-center gap-2 bg-chili text-cream font-semibold px-4 py-3 rounded-xl">{icon('phone','w-4 h-4')}{PHONE_DISP}</a>
+  <button onclick="toggleLang()" class="mt-4 w-full inline-flex items-center justify-center gap-2 border border-line rounded-xl px-4 py-3 font-semibold"><svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c2.6 3 2.6 15 0 18M12 3c-2.6 3-2.6 15 0 18"/></svg><span id="langLabelM">Español</span></button>
+  <a href="tel:{PHONE_TEL}" class="mt-3 flex items-center justify-center gap-2 bg-chili text-cream font-semibold px-4 py-3 rounded-xl">{icon('phone','w-4 h-4')}{PHONE_DISP}</a>
  </div>
 </div>
 '''
@@ -199,7 +204,7 @@ def footer():
     <span class="font-display text-cream text-lg">Mi Tierra</span>
    </div>
    <p class="text-sm leading-relaxed">A family run Mexican carnicería, taquería, and market on Main Street in downtown Caldwell. The real deal.</p>
-   <p class="mt-3 inline-flex items-center gap-1.5 text-sm">{icon('star','w-4 h-4 text-gold')}<b class="text-cream">{RATING}</b> · {RCOUNT} Google reviews</p>
+   <p class="mt-3 inline-flex items-center gap-1.5 text-sm">{fstar('w-4 h-4 text-gold')}<b class="text-cream">{RATING}</b> · {RCOUNT} Google reviews</p>
   </div>
   <div>
    <h3 class="text-cream font-bold text-sm uppercase tracking-wider mb-3">Visit</h3>
@@ -234,11 +239,12 @@ function openMenu(){{document.getElementById('mobileMenu').style.display='block'
 function closeMenu(){{document.getElementById('mobileMenu').style.display='none';document.body.style.overflow='';}}
 (function(){{var t=document.getElementById('rv');if(!t)return;t.innerHTML+=t.innerHTML;}})();
 </script>
+''' + I18N_SCRIPT + '''
 </body></html>'''
 print("part2 loaded")
 
 def stars(cls="w-4 h-4"):
-  return '<div class="flex text-gold">'+("".join(icon('star',cls) for _ in range(5)))+'</div>'
+  return '<div class="flex text-gold">'+("".join(fstar(cls) for _ in range(5)))+'</div>'
 
 def rcard(r, w="w-[330px]"):
   name,meta,txt=r
@@ -314,7 +320,7 @@ def index_body():
  </div>
  <div class="relative max-w-6xl mx-auto px-4 -mb-10 md:-mb-12">
   <div class="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
-   <div class="bg-card border border-line rounded-2xl p-4 shadow-lg"><div class="flex items-center gap-2 text-gold mb-1">{icon('star','w-5 h-5')}<span class="font-display text-2xl text-ink">{RATING}</span></div><div class="text-xs text-muted font-semibold">{RCOUNT} Google reviews</div></div>
+   <div class="bg-card border border-line rounded-2xl p-4 shadow-lg"><div class="flex items-center gap-2 text-gold mb-1">{fstar('w-5 h-5')}<span class="font-display text-2xl text-ink">{RATING}</span></div><div class="text-xs text-muted font-semibold">{RCOUNT} Google reviews</div></div>
    <div class="bg-card border border-line rounded-2xl p-4 shadow-lg"><div class="font-display text-lg text-chili leading-tight">Carne Asada Preparada</div><div class="text-xs text-muted font-semibold mt-1">Marinated, by the pound</div></div>
    <div class="col-span-2 md:col-span-1 bg-card border border-line rounded-2xl p-4 shadow-lg"><div class="font-display text-lg text-verde leading-tight">Tortillas Hechas a Mano</div><div class="text-xs text-muted font-semibold mt-1">Pressed fresh, every order</div></div>
   </div>
@@ -614,6 +620,117 @@ def blog_page():
 </article>
 </main>'''
   return head("How to order at a Mexican carnicería | Carnicería Mi Tierra, Caldwell","A first-timer's guide to ordering at Carnicería Mi Tierra in Caldwell: carne asada preparada, tacos, tamales, the self-serve beer fridge, and setting up a party.",[ld_blog()],og="img/tacos.jpg")+header()+blog_page_audio_note()+footer() if False else head("How to order at a Mexican carnicería | Carnicería Mi Tierra, Caldwell","A first-timer's guide to ordering at Carnicería Mi Tierra in Caldwell: carne asada preparada, tacos, tamales, the self-serve beer fridge, and setting up a party.",[ld_blog()],og="img/tacos.jpg")+header()+body+footer()
+
+
+# ---------- I18N (Mexican Spanish) ----------
+ES_DICT={
+ "from 225 Google reviews":"de 225 reseñas de Google",
+ "Open daily, 8:00 AM to 8:00 PM":"Abierto a diario, 8:00 AM a 8:00 PM",
+ "Gallery":"Galería","Reviews":"Reseñas","About":"Nosotros",
+ "Call":"Llamar","Call (208) 453-2046":"Llámanos (208) 453-2046","Get directions":"Cómo llegar",
+ "See more":"Ver más","All departments":"Todos los departamentos","More departments":"Más departamentos",
+ "Family owned":"Negocio familiar",
+ "Caldwell's real Mexican carnicería and taquería.":"La verdadera carnicería y taquería mexicana de Caldwell.",
+ "Marinated carne asada by the pound, huge tacos with a grilled jalapeño, handmade corn tortillas with every order, and a whole Mexican market in the back. Folks drive in from Boise and Meridian for it.":"Carne asada preparada por libra, tacos enormes con jalapeño asado, tortillas de maíz hechas a mano con cada orden, y todo un mercado mexicano al fondo. La gente viene desde Boise y Meridian por ella.",
+ "225 Google reviews":"225 reseñas de Google","Marinated, by the pound":"Preparada, por libra","Pressed fresh, every order":"Hechas al momento, cada orden",
+ "Why folks drive in":"Por qué la gente maneja hasta acá",
+ "A neighborhood carnicería that does it the real way.":"Una carnicería de barrio que lo hace como se debe.",
+ "The real deal, not just a meat case":"De a de veras, no solo una vitrina de carne",
+ "Custom cuts, marinated asada, even a whole pig. Reviewers call it the real local butcher shop they had been looking for.":"Cortes a tu gusto, asada preparada, hasta un cerdo entero. Los clientes la llaman la verdadera carnicería del barrio que andaban buscando.",
+ "Cooked like a grandma would":"Cocinado como lo haría una abuela",
+ "Homemade corn tortillas with every order, huge tacos, and plates folks say taste like a Mexican grandmother made them.":"Tortillas de maíz hechas en casa con cada orden, tacos enormes, y platillos que la gente dice saben a los de una abuela mexicana.",
+ "A whole market in one stop":"Todo un mercado en una sola parada",
+ "Meat counter, hot food in the back, fresh tortillas, a full grocery, and a self-serve beer fridge, all under one roof.":"Vitrina de carne, comida caliente al fondo, tortillas frescas, abarrotes completos y un refri de cervezas de autoservicio, todo bajo un mismo techo.",
+ "What we do":"Lo que hacemos","From the meat counter to the table.":"De la vitrina a la mesa.",
+ "Fresh & marinated meats":"Carnes frescas y preparadas",
+ "Custom cuts and our famous carne asada preparada, marinated and ready for the grill.":"Cortes a tu gusto y nuestra famosa carne asada preparada, lista para el asador.",
+ "Tacos, tortas & quesadillas":"Tacos, tortas y quesadillas",
+ "Huge tacos with a grilled jalapeño, tortas, and quesadillas, cooked to order in the back.":"Tacos enormes con jalapeño asado, tortas y quesadillas, hechos al momento en la cocina de atrás.",
+ "Soups & Mexican plates":"Caldos y platillos",
+ "Hearty caldos and full Mexican plates with rice and beans, like a grandma would make.":"Caldos sustanciosos y platillos completos con arroz y frijoles, como los hace una abuela.",
+ "Handmade, every day":"Hechas a mano, todos los días",
+ "Corn tortillas pressed for every order and tamales by the dozen, cooked or frozen to go.":"Tortillas de maíz hechas para cada orden y tamales por docena, calientitos o congelados para llevar.",
+ "Mexican grocery & cantina":"Abarrotes y cantina",
+ "A full Mexican market: salsas, dulces, jarritos, party goods, and a self-serve beer fridge.":"Un mercado mexicano completo: salsas, dulces, jarritos, cosas para fiesta y un refri de cervezas de autoservicio.",
+ "BBQ & party trays":"Carne para fiestas y charolas",
+ "Everything for a backyard BBQ or party: marinated meat by the pound and party-sized orders.":"Todo para una carne asada o fiesta: carne preparada por libra y órdenes para fiesta.",
+ "How it works":"Cómo funciona","Walk in hungry, leave with dinner and groceries.":"Entra con hambre, sal con la cena y el mandado.",
+ "Come in off Main Street":"Llega por la calle Main",
+ "Find us at 517 Main St in downtown Caldwell, look for the red awning.":"Encuéntranos en el 517 de Main St en el centro de Caldwell, busca el toldo rojo.",
+ "Order at the counter, or pick your cuts":"Ordena en el mostrador, o escoge tus cortes",
+ "Hot food and tacos are ordered in the back. Want to grill at home? The carniceros will cut and marinate your meat.":"La comida caliente y los tacos se ordenan al fondo. ¿Quieres asar en casa? Los carniceros te cortan y preparan la carne.",
+ "Grab a cerveza, eat in or take it home":"Agarra una cerveza, come aquí o llévatelo",
+ "Help yourself to a cold one from the fridge, they tab your table. Shop the market on your way out.":"Sírvete una fría del refri, la apuntan a tu mesa. Date una vuelta por el mercado a la salida.",
+ "The shop":"La tienda","Real food, real market, on Main Street.":"Comida de verdad, mercado de verdad, en Main Street.",
+ "Straight from Google and Yelp":"Directo de Google y Yelp","Loved across the Treasure Valley.":"Querida en todo el Treasure Valley.",
+ "based on 225 Google reviews":"según 225 reseñas de Google",
+ "The family behind the counter":"La familia detrás del mostrador","A hidden gem in the back of the market.":"Una joya escondida al fondo del mercado.",
+ "Carnicería Mi Tierra has been a Main Street fixture in downtown Caldwell, a family run shop where the meat case, the kitchen, and a full Mexican grocery all live under one roof. Regulars say it feels a little like Tijuana, in the best way, with staff who treat you like family.":"Carnicería Mi Tierra es desde hace años un punto de referencia en Main Street, en el centro de Caldwell, un negocio familiar donde la vitrina de carne, la cocina y un mercado mexicano completo conviven bajo un mismo techo. Los clientes dicen que se siente un poco como Tijuana, en el buen sentido, con un trato que te hace sentir de la familia.",
+ "The carniceros cut and marinate the asada by hand, the cocina presses tortillas fresh for every order, and the freezer is stocked with tamales people drive across the valley for. It is not just a meat market. It is the real deal.":"Los carniceros cortan y preparan la asada a mano, la cocina hace las tortillas al momento para cada orden, y el congelador está surtido de tamales por los que la gente maneja desde todo el valle. No es solo una carnicería. Es la de a de veras.",
+ "From the counter":"Desde el mostrador",
+ "How to order at a Mexican carnicería (and what to ask for)":"Cómo ordenar en una carnicería mexicana (y qué pedir)",
+ "New to the carnicería? Here is exactly what to order, how to ask for your asada preparada, and how the taquería in the back works.":"¿Primera vez en la carnicería? Aquí te decimos qué ordenar, cómo pedir tu asada preparada, y cómo funciona la taquería de atrás.",
+ "Read the guide":"Leer la guía","Setting up a carne asada?":"¿Vas a hacer una carne asada?",
+ "Order marinated meat by the pound, fresh tortillas, salsas, and drinks for the whole fiesta in one stop.":"Pide carne preparada por libra, tortillas frescas, salsas y bebidas para toda la fiesta en una sola parada.",
+ "Plan your party":"Organiza tu fiesta",
+ "Good to know":"Bueno saber","Questions, answered.":"Preguntas, respondidas.",
+ "Do you have a taquería, or is it just a meat market?":"¿Tienen taquería, o es solo carnicería?",
+ "Both. There is a full meat counter and a Mexican grocery up front, and a taquería kitchen in the back serving tacos, tortas, quesadillas, caldos, and plates.":"Las dos cosas. Al frente hay una vitrina de carne completa y un mercado mexicano, y al fondo una cocina de taquería con tacos, tortas, quesadillas, caldos y platillos.",
+ "Can I buy meat by the pound and get custom cuts?":"¿Puedo comprar carne por libra y pedir cortes a mi gusto?",
+ "Yes. The carnicería does custom cuts and carne asada preparada, marinated and ready for the grill, sold by the pound. Ask for special cuts or a whole pig for a party.":"Sí. La carnicería hace cortes a tu gusto y carne asada preparada, lista para el asador, vendida por libra. Pide cortes especiales o un cerdo entero para tu fiesta.",
+ "Are the tortillas really made fresh?":"¿De verdad hacen las tortillas frescas?",
+ "Yes, corn tortillas are pressed fresh for your order, and reviewers keep coming back for them and for the tamales.":"Sí, las tortillas de maíz se hacen al momento para tu orden, y los clientes regresan por ellas y por los tamales.",
+ "Can you set me up for a backyard BBQ or party?":"¿Me pueden surtir para una carne asada o fiesta?",
+ "Yes. Tell us your headcount and date and we will help you order marinated meat, tortillas, salsas, sides, and drinks for the whole fiesta.":"Sí. Dinos cuántas personas y la fecha, y te ayudamos a ordenar carne preparada, tortillas, salsas, guarniciones y bebidas para toda la fiesta.",
+ "Do you sell beer?":"¿Venden cerveza?",
+ "Yes, there is a self-serve beer fridge, just grab a cold one and we tab it to your table.":"Sí, hay un refri de cervezas de autoservicio, agarra una fría y la apuntamos a tu mesa.",
+ "Where are you and what are your hours?":"¿Dónde están y cuál es su horario?",
+ "517 Main St in downtown Caldwell. Open Monday to Saturday 8:00 AM to 8:00 PM, and Sunday 8:00 AM to 7:00 PM.":"517 Main St en el centro de Caldwell. Abierto de lunes a sábado de 8:00 AM a 8:00 PM, y domingo de 8:00 AM a 7:00 PM.",
+ "Come hungry. Leave with dinner, and groceries.":"Ven con hambre. Vete con la cena, y el mandado.",
+ "517 Main St, Caldwell. Open every day. Walk in, call ahead, or set up your next BBQ.":"517 Main St, Caldwell. Abierto todos los días. Pásate, llámanos, u organiza tu próxima carne asada.",
+ "A family run Mexican carnicería, taquería, and market on Main Street in downtown Caldwell. The real deal.":"Una carnicería, taquería y mercado mexicano familiar en Main Street, en el centro de Caldwell. La de a de veras.",
+ "Visit":"Visítanos","Hours":"Horario","Mon to Sat":"Lun a Sáb","Sunday":"Domingo","Explore":"Explora",
+ "8:00 AM to 8:00 PM":"8:00 AM a 8:00 PM","8:00 AM to 7:00 PM":"8:00 AM a 7:00 PM",
+ "8 AM to 8 PM":"8 AM a 8 PM","8 AM to 7 PM":"8 AM a 7 PM",
+ "© 2026 Carnicería Mi Tierra. All rights reserved.":"© 2026 Carnicería Mi Tierra. Todos los derechos reservados.",
+ "· 225 Google reviews":"· 225 reseñas de Google",
+ "Home":"Inicio","Departments":"Departamentos","What it is":"Qué es","Good for":"Ideal para",
+ "Ready when you are.":"Listos cuando tú quieras.","Call ahead or just walk in to 517 Main St.":"Llámanos o pásate directo al 517 de Main St.",
+ "What people say":"Lo que dice la gente",
+ "What you will find":"Lo que encontrarás","Sold how you want it":"Como tú lo quieras","Why folks come back":"Por qué regresan",
+ "On the plate":"En el plato","Made to order":"Hecho al momento","The vibe":"El ambiente","Plates":"Platillos","Soups":"Caldos",
+ "Comes with":"Viene con","Tip":"Consejo","On the shelves":"En los estantes","Self-serve cerveza":"Cerveza de autoservicio",
+ "One stop":"Una sola parada","Carne for the grill":"Carne para el asador","Round it out":"Complétalo","Plan ahead":"Planéalo con tiempo",
+ "Everything under one roof":"Todo bajo un mismo techo","A carnicería, a taquería, and a Mexican market.":"Una carnicería, una taquería y un mercado mexicano.",
+ "Pick your cuts, order hot food in the back, stock up on groceries, and set up your next party, all in one stop on Main Street.":"Escoge tus cortes, ordena comida caliente al fondo, surte tu despensa y organiza tu próxima fiesta, todo en una parada en Main Street.",
+ "Come see us at 517 Main St.":"Ven a visitarnos al 517 de Main St.","Open every day. Walk in or call ahead.":"Abierto todos los días. Pásate o llámanos.",
+ "From the counter · Caldwell, ID":"Desde el mostrador · Caldwell, ID",
+ "First time at a real carnicería? Here is how Mi Tierra works, what to order, and how to walk out with a trunk full of dinner.":"¿Primera vez en una carnicería de verdad? Así funciona Mi Tierra, qué ordenar, y cómo salir con la cajuela llena de cena.",
+ "Listen instead: the Mi Tierra carnicería guide":"Mejor escúchalo: la guía de la carnicería Mi Tierra",
+ "A quick two minute walk through with Ava and Marco":"Un recorrido rápido de dos minutos con Ava y Marco",
+ "Ready to order?":"¿Listo para ordenar?","Fresh meat, hot tacos, and a whole market on Main Street.":"Carne fresca, tacos calientes y todo un mercado en Main Street.",
+ "See the departments":"Ver los departamentos",
+}
+import json as _json
+I18N_SCRIPT="<script>\nvar I18N="+_json.dumps(ES_DICT,ensure_ascii=False)+";\n"+r"""
+function _trWalk(lang){
+ var w=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT,{acceptNode:function(n){var p=n.parentNode;if(!p)return NodeFilter.FILTER_REJECT;var t=p.nodeName;if(t==='SCRIPT'||t==='STYLE'||t==='NOSCRIPT'||t==='AUDIO')return NodeFilter.FILTER_REJECT;return NodeFilter.FILTER_ACCEPT;}});
+ var nodes=[];while(w.nextNode())nodes.push(w.currentNode);
+ nodes.forEach(function(n){
+  var raw=n.nodeValue;if(!raw)return;var key=raw.trim().replace(/\s+/g,' ');if(!key)return;
+  if(n.__en===undefined)n.__en=raw;
+  if(lang==='es'&&I18N[key]!==undefined){var lead=(raw.match(/^\s*/)||[''])[0],tr=(raw.match(/\s*$/)||[''])[0];n.nodeValue=lead+I18N[key]+tr;}
+  else{n.nodeValue=n.__en;}
+ });
+ document.documentElement.lang=lang;
+ var lb=document.getElementById('langLabel');if(lb)lb.textContent=(lang==='es'?'EN':'ES');
+ var lbm=document.getElementById('langLabelM');if(lbm)lbm.textContent=(lang==='es'?'English':'Español');
+ try{localStorage.setItem('lang',lang);}catch(e){}
+}
+function toggleLang(){var cur='en';try{cur=localStorage.getItem('lang')||'en';}catch(e){}_trWalk(cur==='es'?'en':'es');}
+(function(){var l=null;try{l=localStorage.getItem('lang');}catch(e){}if(l==='es')_trWalk('es');})();
+</script>"""
+
 
 # ---------- WRITE FILES ----------
 def w(fn,html):
