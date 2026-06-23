@@ -155,9 +155,9 @@ def header():
 <div class="bg-ink text-cream text-[12.5px]">
  <div class="max-w-6xl mx-auto px-4 py-1.5 flex flex-wrap items-center justify-center gap-x-4 gap-y-0.5 text-center">
   <span class="inline-flex items-center gap-1.5">{fstar('w-3.5 h-3.5 text-gold')}<b class="font-semibold">{RATING}</b> from {RCOUNT} Google reviews</span>
-  <span class="opacity-40">|</span>
+  <span class="opacity-40 hidden sm:inline">|</span>
   <span class="inline-flex items-center gap-1.5">{icon('clock','w-3.5 h-3.5 text-gold')}Open daily, 8:00 AM to 8:00 PM</span>
-  <span class="opacity-40">|</span>
+  <span class="opacity-40 hidden sm:inline">|</span>
   <span class="inline-flex items-center gap-1.5">{icon('pin','w-3.5 h-3.5 text-gold')}517 Main St, Caldwell</span>
  </div>
 </div>
